@@ -47,6 +47,7 @@ void setup() {
 
   // set time
   configTime(timezone * 3600, 0, "pool.ntp.org", "time.nist.gov");
+  
   Serial.println("\nWaiting for time");
   while (!time(nullptr)) {
     Serial.print(".");
