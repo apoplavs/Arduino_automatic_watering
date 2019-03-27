@@ -2,22 +2,140 @@
 <html lang="ua">
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>Полив</title>
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	 <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 <style type='text/css'>
 	body button{
 		font-size: 4rem;
+		background-color: white;
+	}
+	table {
+		width: 100%;
+	}
+	table td {
+		min-width: 25px!important;
+		min-height: 25px!important;
+		width: 30px;
+		height: 30px;
+		color: #f0f0f0;
+	}
+
+	table td.zone {
+		border: 2px solid white;
+		color: black;
+	}
+	table td.zone1 {
+		background: linear-gradient(to top, #9b9b9b, #808080);
+	}
+	table td.zone2 {
+		background: linear-gradient(to left, #3cb371, #6ac98f, #3cb371);
+	}
+	table td.zone3 {
+		background: linear-gradient(to top, #9b9b9b, #808080);
+	}
+	table td.zone4 {
+		background: linear-gradient(to left, #3cb371, #6ac98f, #3cb371);
 	}
 </style>
 </head>
 <body>
-	<div class="row">
-		<div class="col-sm-12 col-lg-6">TEST</div>
+	<!-- <div class="alert alert-primary" role="alert">
+	  Это основное уведомление — check it out!
+	</div> -->
+
+	<div class="container p-0">
+		<div class="row">
+			<div class="col-md-6 offset-md-3 col-12 text-center">
+				<table cellpadding="4" cellspacing="0">
+					<tr>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+					</tr>
+					<tr>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td colspan="4" rowspan="2" class="zone zone4" data-toggle="modal" data-target="#modalZone4">4</td>
+					</tr>
+					<tr>
+						<td colspan="4" rowspan="3" class="zone zone1" data-toggle="modal" data-target="#modalZone1">1</td>
+						<td colspan="2" rowspan="6" class="zone zone3" data-toggle="modal" data-target="#modalZone3">3</td>
+						<td>.</td>
+					</tr>
+					<tr>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>			
+					</tr>
+					<tr>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>			
+					</tr>
+					<tr>
+						<td>.</td>
+						<td colspan="3" rowspan="3" class="zone zone2" data-toggle="modal" data-target="#modalZone2">2</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+					</tr>
+					<tr>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+					</tr>
+					<tr>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+					</tr>
+					<tr>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+						<td>.</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
-	<div align="center">
+	
+	<!-- <div align="center" class="mt-5">
 		<h4>Реле 1</h4>
 		<a href="/r1=ON"><button>вкл</button></a> <a href="/r1=ON"><button>викл</button></a>
 		<h4>Реле 2</h4>
@@ -26,6 +144,64 @@
 		<a href="/r3=ON"><button>вкл</button></a> <a href="/r3=ON"><button>викл</button></a>
 		<h4>Реле 4</h4>
 		<a href="/r4=ON"><button>вкл</button></a> <a href="/r4=ON"><button>викл</button></a>
-	</div>
+	</div> -->
+
+	<!-- Button trigger modal -->
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalZone2">
+  Launch demo modal
+</button> -->
+
+<!-- Modal zone1 -->
+<div class="modal fade" id="modalZone1" tabindex="-1" role="dialog" aria-labelledby="modalZone1Title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Зона 1</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+        <button type="button" class="btn btn-primary">Додати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal zone2 -->
+<div class="modal fade" id="modalZone2" tabindex="-1" role="dialog" aria-labelledby="modalZone2Title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Зона 2</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
+        <button type="button" class="btn btn-primary">Додати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </body>
+ 	<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+    	
+    </script>
 </html>
