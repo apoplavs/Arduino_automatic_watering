@@ -1,3 +1,6 @@
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
 #include <WiFiServer.h>
 #include <ESP8266WiFiGeneric.h>
 #include <ESP8266WiFiScan.h>
@@ -18,14 +21,24 @@
 #include <WiFiServerSecure.h>
 #include <time.h>
 
-const char* ssid = "ShypishWIFI";
-const char* password = "Shipish89075074";
+#define SSID            "ShypishWIFI"
+#define SSID_PASS       "Shipish89075074"
+
+#define TZ              1       // (utc+) TZ in hours
+#define DST_MN          60      // use 60mn for summer time
+#define TZ_SEC          ((TZ)*3600)
+#define DST_SEC         ((DST_MN)*60)
+
+time_t now;
+struct tm * timeinfo;
+int z=1;
 
 int zone1 = D2;
 int zone2 = D3;
 int zone3 = D4;
 int zone4 = D5;
 
+//WiFiUDP ntpUDP;
 
 WiFiServer server(80);
  
@@ -44,17 +57,36 @@ void setup() {
   digitalWrite(zone4, HIGH);
   
   connectToWifi();
-
-  // set time
-  configTime(timezone * 3600, 0, "pool.ntp.org", "time.nist.gov");
+delay(1500);
+  // Synchronize time useing SNTP. This is necessary to verify that
+  // the TLS certificates offered by the server are currently valid.
+  configTime(TZ_SEC, DST_SEC, "pool.ntp.org");  
+  //delay(120000); // wait 2 minutes
+  now = time(nullptr);
   
-  Serial.println("\nWaiting for time");
-  while (!time(nullptr)) {
-    Serial.print(".");
-    delay(1000);
+  while(true) {
+    now = time(nullptr); // get current time as UNIX TIMESTAMP
+    timeinfo = localtime(&now); // get local time in struct
+    timeinfo->tm_year = timeinfo->tm_year+1900;
+    timeinfo->tm_mon = timeinfo->tm_mon+1;
+    Serial.println("");
+    Serial.print("Setting time using SNTP ");
+    Serial.println(now);
+    Serial.print(" DATE & time ");
+    Serial.print(timeinfo->tm_year);
+    Serial.print(" ");
+    Serial.print(timeinfo->tm_mon);
+    Serial.print(" ");
+    Serial.print(timeinfo->tm_mday);
+    Serial.print("  ");
+    
+    Serial.print(timeinfo->tm_hour);
+    Serial.print(":");
+    Serial.print(timeinfo->tm_min);
+    Serial.print(":");
+    Serial.print(timeinfo->tm_sec);
+    delay(5000);
   }
-  Serial.println("");
-  
  
 }
  
@@ -161,11 +193,10 @@ void loop() {
 void connectToWifi() {
   // Connect to WiFi network
   Serial.println();
-  Serial.println();
   Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Serial.println(SSID);
  
-  WiFi.begin(ssid, password);
+  WiFi.begin(SSID, SSID_PASS); 
  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
