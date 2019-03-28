@@ -30,153 +30,107 @@
 #define DST_SEC         ((DST_MN)*60)
 
 time_t now;
+
+/*
+tm_year
+tm_mon
+tm_mday
+tm_hour
+tm_min
+tm_sec
+*/
 struct tm * timeinfo;
-int z=1;
 
-int zone1 = D2;
-int zone2 = D3;
-int zone3 = D4;
-int zone4 = D5;
+Zone zone1(D2);
+Zone zone2(D3);
+Zone zone3(D4);
+Zone zone4(D5);
 
-//WiFiUDP ntpUDP;
+// int zone1 = D2;
+// int zone2 = D3;
+// int zone3 = D4;
+// int zone4 = D5;
 
 WiFiServer server(80);
+WiFiClient client;
  
 void setup() {
   Serial.begin(9600);
   delay(10);
- 
- 
-  pinMode(zone1, OUTPUT);
-  digitalWrite(zone1, HIGH);
-  pinMode(zone2, OUTPUT);
-  digitalWrite(zone2, HIGH);
-  pinMode(zone3, OUTPUT);
-  digitalWrite(zone3, HIGH);
-  pinMode(zone4, OUTPUT);
-  digitalWrite(zone4, HIGH);
+  
+  zone1.setPin();
+  zone2.setPin();
+  zone3.setPin();
+  zone4.setPin();
   
   connectToWifi();
-delay(1500);
+  // waiting for connecting
+  delay(1500);
+
   // Synchronize time useing SNTP. This is necessary to verify that
   // the TLS certificates offered by the server are currently valid.
   configTime(TZ_SEC, DST_SEC, "pool.ntp.org");  
-  //delay(120000); // wait 2 minutes
-  now = time(nullptr);
-  
-  while(true) {
-    now = time(nullptr); // get current time as UNIX TIMESTAMP
-    timeinfo = localtime(&now); // get local time in struct
-    timeinfo->tm_year = timeinfo->tm_year+1900;
-    timeinfo->tm_mon = timeinfo->tm_mon+1;
-    Serial.println("");
-    Serial.print("Setting time using SNTP ");
-    Serial.println(now);
-    Serial.print(" DATE & time ");
-    Serial.print(timeinfo->tm_year);
-    Serial.print(" ");
-    Serial.print(timeinfo->tm_mon);
-    Serial.print(" ");
-    Serial.print(timeinfo->tm_mday);
-    Serial.print("  ");
-    
-    Serial.print(timeinfo->tm_hour);
-    Serial.print(":");
-    Serial.print(timeinfo->tm_min);
-    Serial.print(":");
-    Serial.print(timeinfo->tm_sec);
-    delay(5000);
-  }
- 
+  setTime();
+
+  // Set client connected
+  client = server.available();
 }
- 
+
+
+
 void loop() {
-  // Check if a client has connected
-  WiFiClient client = server.available();
-  if (!client) {
-    return;
-  }
  
-  // Wait until the client sends some data
-  Serial.println("new client");
-  while(!client.available()){
-    delay(1);
-  }
- 
-  // Read the first line of the request
-  String request = client.readStringUntil('\r');
-  Serial.println(request);
-  client.flush();
- 
-  // Match the request
- 
-  int value = LOW;
-  
-  if (request.indexOf("/zone1=ON") != -1) {
-    digitalWrite(zone1, LOW);
-  } else if (request.indexOf("/zone1=OFF") != -1){
-    digitalWrite(zone1, HIGH);
-  }
-  
-  if (request.indexOf("/zone2=ON") != -1) {
-    digitalWrite(zone2, LOW);
-  } else  if (request.indexOf("/zone2=OFF") != -1){
-    digitalWrite(zone2, HIGH);
+  // When the client sends some data
+  if (client.available()){
+    Serial.println("new client");
+
+    // Read the first line of the request
+    String request = client.readStringUntil('\r');
+    Serial.println(request);
+    client.flush();
+    handleRequest(request);
   }
 
-  if (request.indexOf("/zone3=ON") != -1) {
-    digitalWrite(zone3, LOW);
-  } else  if (request.indexOf("/zone3=OFF") != -1){
-    digitalWrite(zone3, HIGH);
-  }
+
+
+
+
+
+
+ 
+ 
+  
+  // if (request.indexOf("/zone1=ON") != -1) {
+  //   digitalWrite(zone1, LOW);
+  // } else if (request.indexOf("/zone1=OFF") != -1){
+  //   digitalWrite(zone1, HIGH);
+  // }
+  
+  // if (request.indexOf("/zone2=ON") != -1) {
+  //   digitalWrite(zone2, LOW);
+  // } else  if (request.indexOf("/zone2=OFF") != -1){
+  //   digitalWrite(zone2, HIGH);
+  // }
+
+  // if (request.indexOf("/zone3=ON") != -1) {
+  //   digitalWrite(zone3, LOW);
+  // } else  if (request.indexOf("/zone3=OFF") != -1){
+  //   digitalWrite(zone3, HIGH);
+  // }
  
  
  
-  // Return the response
-  client.println("HTTP/1.1 200 OK");
-  client.println("Content-Type: text/html");
-  client.println(""); //  do not forget this one
-  client.println("<!DOCTYPE html>"
-"<html>"
-"<head>"
-  "<meta charset='utf-8'>"
-  "<title>Полив</title>"
-"</head>"
-"<style type='text/css'>"
- "body button {"
-    "font-size: 4rem;"
-  "}"
-"</style>"
-"<body>"
-  "<div align='center'>"
-    "<h4>Реле 1</h4>"
-    "<a href='/zone1=ON'><button>вкл</button></a> <a href='/zone1=OFF'><button>викл</button></a>"
-    "<h4>Реле 2</h4>"
-    "<a href='/zone2=ON'><button>вкл</button></a> <a href='/zone2=OFF'><button>викл</button></a>"
-    "<h4>Реле 3</h4>"
-    "<a href='/zone3=ON'><button>вкл</button></a> <a href='/zone3=OFF'><button>викл</button></a>"
-    "<h4>Реле 4</h4>"
-    "<a href='/zone4=ON'><button>вкл</button></a> <a href='/zone4=OFF'><button>викл</button></a>"
-  "</div>"
-"</body>"
-"</html>");
+  // // Return the response
+  // client.println("HTTP/1.1 200 OK");
+  // client.println("Content-Type: text/html; charset=utf-8");
+  // client.println(""); //  do not forget this one
+
  
-  client.print("Led pin is now: ");
+  // delay(1);
+  // Serial.println("Client disconnected");
+  // Serial.println("");
  
-  if(value == HIGH) {
-    client.print("On");  
-  } else {
-    client.print("Off");
-  }
-  client.println("<br><br>");
-  client.println("Click <a href=\"/LED=ON\">here</a> turn the LED on pin 5 ON<br>");
-  client.println("Click <a href=\"/LED=OFF\">here</a> turn the LED on pin 5 OFF<br>");
-  client.println("</html>");
- 
-  delay(1);
-  Serial.println("Client disconnected");
-  Serial.println("");
- 
+  delay(10);
 }
 
 
@@ -214,4 +168,144 @@ void connectToWifi() {
   Serial.print("http://");
   Serial.print(WiFi.localIP());
   Serial.println("/");
+}
+
+
+/**
+ * set current time and convert to 
+ * the usual state
+ *
+ **/
+void setTime() {
+  now = time(nullptr); // get current time as UNIX TIMESTAMP
+  timeinfo = localtime(&now); // get local time in struct
+  timeinfo->tm_year = timeinfo->tm_year+1900;
+  timeinfo->tm_mon = timeinfo->tm_mon+1;
+}
+
+
+void handleRequest(String request) {
+  Serial.println(request);
+
+  // Return the response Header
+  client.println("HTTP/1.1 200 OK");
+
+  // if user requested date
+  if (request.indexOf("/getData") != -1) {
+    client.println("Content-Type: application/json");
+    client.println(""); //  do not forget this one
+    //@todo повернути черги поливу, значення і ін. в вигляді JSON
+    return;
+  }
+
+  client.println("Content-Type: text/html; charset=utf-8");
+  client.println(""); //  do not forget this one
+
+  // if user sent a management command
+  if (request.indexOf("/zone1") != -1) {
+    zone1.control(request);
+  } else if (request.indexOf("/zone2") != -1) {
+    zone2.control(request);
+  } else  if (request.indexOf("/zone3") != -1) {
+    zone3.control(request);
+  } else  if (request.indexOf("/zone4") != -1){
+    zone4.control(request);
+  } else {
+    // send to user main page
+    client.println(printPage());
+  }
+
+
+}
+
+
+
+
+/**
+ * Class that represent one zone
+ * of watering zone
+ *
+ **/ 
+class Zone {
+  private:
+    int pinRelay; // pin connect to relay
+
+
+  public:
+    unsigned long planingTimeFrom = 0; // TIMESTAMP when watering should turn on
+    unsigned long realTimeFrom = 0; // TIMESTAMP real time, when watering was turn on
+    unsigned long timeDuration = 0; // duration of watering (timeFrom + timeDuration) = Time of end watering
+    boolean isWatering = FALSE; // if watering turn on at the moment
+
+    Zone(int pin) {
+      pinRelay=pin;
+    };
+
+    void setPin() {
+      pinMode(pinRelay, OUTPUT);
+      digitalWrite(pinRelay, HIGH);
+    };
+    void handleCommand(String request) {
+
+    }
+    // check if queue has jobs that shoud be run
+    boolean checkQueue() {
+
+    };
+  
+};
+
+
+
+/**
+ * Class to work with pump
+ * it can turn on/off (emergency)
+ **/
+class Pump {
+  private:
+    int pinRelay; // pin connect to relay
+    int pinAmperemeter = A0; // pin connect to Amperemeter
+
+  public:
+    unsigned long maxWorkingTime = 0; // TIMESTAMP max time for which pump should turn on in 1 cycle
+    unsigned long TimeStart = 0; // TIMESTAMP real time, when pupm was turn on
+    //unsigned long timeWorks = 0; // duration of watering (timeFrom + timeDuration) = Time of end watering
+    boolean isWorks = FALSE; // if pomp turn on at the moment
+    Pump(int pin) {
+      pinRelay=pin;
+    };
+  
+};
+
+
+
+
+
+
+
+String printPage() {
+  return "<!DOCTYPE html>"
+"<html>"
+"<head>"
+  "<meta charset='utf-8'>"
+  "<title>Полив</title>"
+"</head>"
+"<style type='text/css'>"
+ "body button {"
+    "font-size: 4rem;"
+  "}"
+"</style>"
+"<body>"
+  "<div align='center'>"
+    "<h4>Реле 1</h4>"
+    "<a href='/zone1=ON'><button>вкл</button></a> <a href='/zone1=OFF'><button>викл</button></a>"
+    "<h4>Реле 2</h4>"
+    "<a href='/zone2=ON'><button>вкл</button></a> <a href='/zone2=OFF'><button>викл</button></a>"
+    "<h4>Реле 3</h4>"
+    "<a href='/zone3=ON'><button>вкл</button></a> <a href='/zone3=OFF'><button>викл</button></a>"
+    "<h4>Реле 4</h4>"
+    "<a href='/zone4=ON'><button>вкл</button></a> <a href='/zone4=OFF'><button>викл</button></a>"
+  "</div>"
+"</body>"
+"</html>";
 }
